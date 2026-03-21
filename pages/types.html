@@ -1,0 +1,48 @@
+<div class="card">
+  <div class="card-title">หมวดหมู่ความเสี่ยง — รพ.มหาราชนครราชสีมา</div>
+  <div class="card-sub">แบ่งเป็น 2 หมวดหลัก คลิกการ์ดเพื่อดูรายละเอียด</div>
+  <div class="grid-2" id="type-grid"></div>
+  <div class="detail-panel" id="detail-panel">
+    <h3 id="dp-title"></h3>
+    <p id="dp-desc" style="font-size:13px;color:#666;margin-bottom:10px;"></p>
+    <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:6px;">ตัวอย่างอุบัติการณ์:</div>
+    <ul class="bullet-list" id="dp-examples"></ul>
+  </div>
+</div>
+<script>
+const TYPES_DATA=[
+  {title:"ความเสี่ยงทางคลินิกทั่วไป",eng:"Common Clinical Risk",border:"#A32D2D",
+   desc:"เหตุการณ์ที่อาจเกิดกับผู้ป่วยทั่วไปรายใดก็ได้ โดยไม่ระบุจำเพาะโรค",
+   examples:["ความคลาดเคลื่อนทางยา (Medication Error)","ผู้ป่วยพลัดตกหกล้ม","การระบุตัวผู้ป่วยผิดพลาด","ET Tube/Tube/Drain หลุด/เลื่อน","แผลกดทับ","การติดเชื้อในโรงพยาบาล (HAI)"]},
+  {title:"ความเสี่ยงทางคลินิกเฉพาะโรค",eng:"Specific Clinical Risk",border:"#534AB7",
+   desc:"ความเสี่ยงที่ระบุจำเพาะโรคและภาวะเสี่ยง อาจเกิดภาวะไม่พึงประสงค์หรือเสียชีวิต",
+   examples:["มารดา/ทารกเสียชีวิตจากการคลอด","ผู้ป่วย Cardiac Arrest โดยไม่คาดคิด","ผ่าตัดผิดคน/ผิดข้าง/ผิดตำแหน่ง","ลืมวัสดุในตัวผู้ป่วย","Fatal Falls (กระดูกหัก, Brain hemorrhage)"]},
+  {title:"ความเสี่ยงบุคลากร",eng:"Personnel Safety Goals",border:"#854F0B",
+   desc:"ความเสี่ยงเกี่ยวกับบุคลากรผู้ปฏิบัติงาน จัดอยู่ใน Non-Clinical Risk",
+   examples:["บุคลากรถูกวัสดุมีคมทิ่มตำ (Needlestick)","สัมผัสเลือด/สารคัดหลั่ง","โรคจากการทำงาน","ปัญหา Social Media","Mental Health บุคลากร","ถูกข่มขู่/ทำร้ายร่างกาย"]},
+  {title:"ความเสี่ยงองค์กร",eng:"Organization Safety Goals",border:"#0F6E56",
+   desc:"ความเสี่ยงเกี่ยวกับองค์กร ไม่เกี่ยวกับการดูแลรักษาโดยตรง",
+   examples:["ระบบ HIS/Server โรงพยาบาลล่ม","ไฟฟ้าดับในหอผู้ป่วยวิกฤต","อัคคีภัย/สารเคมีรั่วไหล","น้ำประปาไม่ไหล","ปัญหาระบบบริหารพัสดุ","ภัยธรรมชาติ"]},
+];
+window.initTypes=function(){
+  const g=document.getElementById("type-grid");
+  TYPES_DATA.forEach((r,i)=>{
+    const c=document.createElement("div");
+    c.className="type-card";
+    c.style.borderLeftColor=r.border;
+    c.innerHTML=`<span class="badge" style="background:${r.border}22;color:${r.border};">${r.eng}</span><div class="type-card-title">${r.title}</div><div class="type-card-desc">${r.desc.substring(0,55)}...</div>`;
+    c.onclick=()=>{
+      document.querySelectorAll(".type-card").forEach(x=>x.classList.remove("selected"));
+      c.classList.add("selected");
+      const p=document.getElementById("detail-panel");
+      document.getElementById("dp-title").textContent=r.title;
+      document.getElementById("dp-desc").textContent=r.desc;
+      document.getElementById("dp-examples").innerHTML=r.examples.map(e=>`<li>${e}</li>`).join("");
+      p.style.borderLeftColor=r.border;
+      p.classList.add("show");
+    };
+    g.appendChild(c);
+  });
+};
+initTypes();
+</script>

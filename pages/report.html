@@ -1,0 +1,154 @@
+<div class="card">
+  <div class="card-title">แบบรายงานอุบัติการณ์ความเสี่ยง</div>
+  <div class="card-sub">กลุ่มภารกิจด้านการพยาบาล รพ.มหาราชนครราชสีมา — ข้อมูลจะถูกบันทึกลง Google Sheets อัตโนมัติ</div>
+
+  <div id="report-toast" class="status-bar"></div>
+
+  <form id="incident-form" autocomplete="off">
+
+    <!-- ส่วนที่ 1: วัน เวลา สถานที่ -->
+    <div class="form-section-title">1. ข้อมูลเบื้องต้น</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-date">วันที่เกิดเหตุ <span>*</span></label>
+        <input type="date" id="f-date" name="f-date" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-time">เวลาที่เกิดเหตุ <span>*</span></label>
+        <input type="time" id="f-time" name="f-time" class="form-input" required />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-ward">หน่วยงาน/หอผู้ป่วย <span>*</span></label>
+        <select id="f-ward" name="f-ward" class="form-select" required>
+          <option value="">-- เลือกหน่วยงาน --</option>
+          <optgroup label="หอผู้ป่วยสามัญ">
+            <option>หอผู้ป่วยอายุรกรรมชาย</option>
+            <option>หอผู้ป่วยอายุรกรรมหญิง</option>
+            <option>หอผู้ป่วยศัลยกรรมชาย</option>
+            <option>หอผู้ป่วยศัลยกรรมหญิง</option>
+            <option>หอผู้ป่วยกุมารเวชกรรม</option>
+            <option>หอผู้ป่วยสูติกรรม</option>
+            <option>หอผู้ป่วยออร์โธปิดิกส์</option>
+          </optgroup>
+          <optgroup label="หอผู้ป่วยวิกฤต">
+            <option>ICU อายุรกรรม</option>
+            <option>ICU ศัลยกรรม</option>
+            <option>NICU</option>
+            <option>CCU</option>
+          </optgroup>
+          <optgroup label="ห้องผ่าตัด/หน่วยพิเศษ">
+            <option>ห้องผ่าตัด (OR)</option>
+            <option>ห้องฉุกเฉิน (ER)</option>
+            <option>OPD อายุรกรรม</option>
+            <option>OPD ศัลยกรรม</option>
+          </optgroup>
+          <option value="other">หน่วยงานอื่น (ระบุในรายละเอียด)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-reporter">ผู้รายงาน (ชื่อ-นามสกุล)</label>
+        <input type="text" id="f-reporter" name="f-reporter" class="form-input" placeholder="ชื่อผู้รายงาน (ไม่บังคับ)" />
+      </div>
+    </div>
+
+    <!-- ส่วนที่ 2: ประเภทความเสี่ยง -->
+    <div class="form-section-title">2. ประเภทความเสี่ยง</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-type">หมวดหมู่หลัก <span>*</span></label>
+        <select id="f-type" name="f-type" class="form-select" required onchange="updateSubtype()">
+          <option value="">-- เลือกหมวด --</option>
+          <option value="clinical-common">ความเสี่ยงทางคลินิกทั่วไป (Common Clinical)</option>
+          <option value="clinical-specific">ความเสี่ยงทางคลินิกเฉพาะโรค (Specific Clinical)</option>
+          <option value="personnel">Non-Clinic: Personnel Safety Goals</option>
+          <option value="organization">Non-Clinic: Organization Safety Goals</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-subtype">ประเภทย่อย <span>*</span></label>
+        <select id="f-subtype" name="f-subtype" class="form-select" required>
+          <option value="">-- เลือกหมวดหลักก่อน --</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ส่วนที่ 3: รายละเอียด -->
+    <div class="form-section-title">3. รายละเอียดเหตุการณ์</div>
+    <div class="form-group">
+      <label class="form-label" for="f-desc">รายละเอียดสถานการณ์ (SBAR) <span>*</span></label>
+      <textarea id="f-desc" name="f-desc" class="form-textarea" rows="4"
+        placeholder="S (Situation): สถานการณ์ที่เกิดขึ้น&#10;B (Background): ข้อมูลภูมิหลัง&#10;A (Assessment): การประเมิน&#10;R (Recommendation): ข้อแนะนำ" required></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="f-immediate">การแก้ไขเบื้องต้น</label>
+      <textarea id="f-immediate" name="f-immediate" class="form-textarea" rows="2"
+        placeholder="ระบุสิ่งที่ได้ดำเนินการแก้ไขทันทีหลังเกิดเหตุ"></textarea>
+    </div>
+
+    <!-- ส่วนที่ 4: ประเมินความเสี่ยง -->
+    <div class="form-section-title">4. ประเมินระดับความเสี่ยง (Risk Matrix)</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-likelihood">โอกาสเกิด (Likelihood) <span>*</span></label>
+        <select id="f-likelihood" name="f-likelihood" class="form-select" required>
+          <option value="">-- เลือก --</option>
+          <option value="1">1 — Remote (แทบไม่เกิด, &lt;1 ครั้ง/ปี)</option>
+          <option value="2">2 — Unlikely (ไม่ค่อยเกิด, 1–2 ครั้ง/ปี)</option>
+          <option value="3">3 — Possible (อาจเกิด, 3–6 ครั้ง/ปี)</option>
+          <option value="4">4 — Likely (มีโอกาสสูง, 7–11 ครั้ง/ปี)</option>
+          <option value="5">5 — Almost Certain (แน่นอน, ≥12 ครั้ง/ปี)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-severity">ความรุนแรง (Severity) <span>*</span></label>
+        <select id="f-severity" name="f-severity" class="form-select" required>
+          <option value="">-- เลือก --</option>
+          <option value="1">1 — Insignificant (ไม่มีอันตราย) | ระดับ A–B</option>
+          <option value="2">2 — Minor (น้อย) | ระดับ C–D</option>
+          <option value="3">3 — Moderate (ปานกลาง) | ระดับ E–F</option>
+          <option value="4">4 — Major (รุนแรง) | ระดับ G</option>
+          <option value="5">5 — Catastrophic (วิกฤต/เสียชีวิต) | ระดับ H–I</option>
+        </select>
+      </div>
+    </div>
+    <div id="score-display" class="score-display" style="display:none;"></div>
+
+    <!-- Zero Event / Sentinel -->
+    <div class="form-section-title">5. Zero Event / Sentinel Event</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+        <input type="checkbox" id="f-sentinel" name="f-sentinel" style="width:16px;height:16px;" />
+        เป็น Sentinel Event (เหตุการณ์ร้ายแรง ต้องรายงาน ผอ. ทันที ภายใน 24 ชม.)
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+        <input type="checkbox" id="f-zero" name="f-zero" style="width:16px;height:16px;" />
+        เป็น Zero Event (ผ่าตัดผิด / ลืมวัสดุ / เลือดผิด / ส่งมอบทารกผิด)
+      </label>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button type="submit" class="submit-btn" style="flex:2;">ส่งรายงาน</button>
+      <button type="button" onclick="exportPDF()" style="flex:1;padding:11px;font-size:13px;font-weight:700;font-family:inherit;background:#fff;color:#085041;border:2px solid #085041;border-radius:6px;cursor:pointer;">🖨 Export PDF</button>
+    </div>
+  </form>
+</div>
+
+<script>
+const SUBTYPES = {
+  "clinical-common": ["ความคลาดเคลื่อนทางยา (Medication Error)","ผู้ป่วยพลัดตกหกล้ม (Patient Falls)","การระบุตัวผู้ป่วยผิด (Patient Identification)","ET Tube/Tube/Drain หลุด","แผลกดทับ","การติดเชื้อในโรงพยาบาล (HAI)","การสื่อสารผิดพลาด","อื่นๆ"],
+  "clinical-specific": ["มารดา/ทารกเสียชีวิต (Maternal/Perinatal Death)","ผู้ป่วย Cardiac Arrest","ผ่าตัดผิดคน/ผิดข้าง (Wrong-site Surgery)","ลืมวัสดุในตัวผู้ป่วย","ส่งมอบทารกผิดคน","เสียชีวิตโดยไม่คาดคิด (Unexpected Death)","อื่นๆ"],
+  "personnel": ["บุคลากรถูกวัสดุมีคมทิ่มตำ (Needlestick)","สัมผัสเลือด/สารคัดหลั่ง","โรคจากการทำงาน","Social Media & Communication","Mental Health","ถูกข่มขู่/ทำร้าย","ข้อร้องเรียน","อื่นๆ"],
+  "organization": ["ระบบ HIS/Server ล่ม","ไฟฟ้าดับ (วิกฤต)","อัคคีภัย/สารเคมี","น้ำประปาไม่ไหล","ปัญหาพัสดุ/จัดซื้อ","ภัยธรรมชาติ","เกิดเหตุทะเลาะวิวาท","อื่นๆ"],
+};
+
+function updateSubtype() {
+  const type = document.getElementById("f-type").value;
+  const sub  = document.getElementById("f-subtype");
+  sub.innerHTML = '<option value="">-- เลือกประเภทย่อย --</option>';
+  if (SUBTYPES[type]) {
+    SUBTYPES[type].forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; sub.appendChild(o); });
+  }
+}
+</script>

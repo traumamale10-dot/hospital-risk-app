@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card-title">วิเคราะห์สถานการณ์ความเสี่ยง</div>
+  <div class="card-sub">อ้างอิงคู่มือ รพ.มหาราชนครราชสีมา — ระบุประเภท ระดับ และแนวทางการจัดการอัตโนมัติ</div>
+
+  <textarea id="scenario-input" class="form-textarea" style="min-height:90px;"
+    placeholder="อธิบายสถานการณ์ที่เกิดขึ้น เช่น: พยาบาลให้ยาผิดคน ผู้ป่วยแพ้ยาต้องรักษาเพิ่มเติม..."></textarea>
+
+  <div style="font-size:12px;color:#888;margin:8px 0 4px;">ตัวอย่างสถานการณ์:</div>
+  <div class="example-chips" id="example-chips"></div>
+
+  <button onclick="analyzeScenario()" class="submit-btn" style="margin-top:10px;">วิเคราะห์ความเสี่ยง</button>
+</div>
+
+<div class="card" id="analyze-result" style="display:none;"></div>

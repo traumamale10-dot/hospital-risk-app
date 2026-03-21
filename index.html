@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบบริหารความเสี่ยง — รพ.มหาราชนครราชสีมา</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <div>
+        <h1>ระบบบริหารความเสี่ยง</h1>
+        <p>กลุ่มภารกิจด้านการพยาบาล โรงพยาบาลมหาราชนครราชสีมา</p>
+      </div>
+      <span class="version-badge">ปี 2567</span>
+    </div>
+  </header>
+
+  <nav class="tab-nav" id="tab-nav">
+    <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+    <button class="tab-btn" data-tab="knowledge">คำจำกัดความ</button>
+    <button class="tab-btn" data-tab="types">ประเภทความเสี่ยง</button>
+    <button class="tab-btn" data-tab="matrix">Risk Matrix</button>
+    <button class="tab-btn" data-tab="severity">ระดับความรุนแรง</button>
+    <button class="tab-btn" data-tab="flow">Flow การจัดการ</button>
+    <button class="tab-btn" data-tab="zero">Zero Event</button>
+    <button class="tab-btn" data-tab="report">📝 รายงานอุบัติการณ์</button>
+    <button class="tab-btn" data-tab="analyze">🔍 วิเคราะห์สถานการณ์</button>
+  </nav>
+
+  <main class="app-main">
+    <section id="tab-dashboard" class="tab-section active" data-page="pages/dashboard.html"></section>
+    <section id="tab-knowledge" class="tab-section"        data-page="pages/knowledge.html"></section>
+    <section id="tab-types"     class="tab-section"        data-page="pages/types.html"></section>
+    <section id="tab-matrix"    class="tab-section"        data-page="pages/matrix.html"></section>
+    <section id="tab-severity"  class="tab-section"        data-page="pages/severity.html"></section>
+    <section id="tab-flow"      class="tab-section"        data-page="pages/flow.html"></section>
+    <section id="tab-zero"      class="tab-section"        data-page="pages/zero.html"></section>
+    <section id="tab-report"    class="tab-section"        data-page="pages/report.html"></section>
+    <section id="tab-analyze"   class="tab-section"        data-page="pages/analyze.html"></section>
+  </main>
+
+  <footer class="app-footer">
+    คู่มือการบริหารความเสี่ยง กลุ่มภารกิจด้านการพยาบาล รพ.มหาราชนครราชสีมา ปี 2567 |
+    อ้างอิง: สรพ. HA Standard / ISO 31000 / WHO Patient Safety
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/report.js"></script>
+  <script src="js/analyzer.js"></script>
+  <script src="js/pdf.js"></script>
+</body>
+</html>
