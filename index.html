@@ -83,6 +83,115 @@
     opacity: 0.8;
   }
 
+  /* ===== SEARCH BOX ===== */
+  .sidebar-search {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 13px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  #sidebar-search-input {
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    padding: 8px 30px 8px 32px;
+    color: #fff;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  #sidebar-search-input::placeholder { color: rgba(255,255,255,0.45); }
+
+  #sidebar-search-input:focus {
+    background: rgba(255,255,255,0.15);
+    border-color: var(--teal-light);
+    box-shadow: 0 0 0 2px rgba(94,200,212,0.2);
+  }
+
+  #search-clear-btn {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 2px;
+    display: none;
+  }
+
+  #search-clear-btn:hover { color: #fff; }
+
+  #search-results-count {
+    font-size: 11px;
+    color: var(--teal-pale);
+    margin-top: 6px;
+    padding-left: 2px;
+    min-height: 16px;
+  }
+
+  .nav-item.search-hidden { display: none; }
+  .nav-item.search-match { background: rgba(197,154,42,0.15); border-left-color: var(--gold); }
+
+  mark.search-highlight {
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: 2px;
+    padding: 0 1px;
+    font-weight: 700;
+  }
+
+  .search-result-section {
+    display: block;
+    padding: 6px 20px 6px 24px;
+    background: rgba(94,200,212,0.08);
+    border-left: 3px solid var(--teal-light);
+    color: rgba(255,255,255,0.85);
+    font-size: 12.5px;
+    cursor: pointer;
+    line-height: 1.5;
+    transition: all 0.2s;
+  }
+
+  .search-result-section:hover {
+    background: rgba(94,200,212,0.18);
+    color: #fff;
+  }
+
+  .search-result-label {
+    font-size: 10px;
+    color: var(--teal-light);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 1px;
+  }
+
+  #search-no-result {
+    display: none;
+    padding: 10px 20px;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+  }
+
   nav { flex: 1; padding: 12px 0; }
 
   .nav-section-label {
@@ -783,7 +892,16 @@
     <div class="sidebar-title">คู่มือการบริหารความเสี่ยง<br>กลุ่มภารกิจด้านการพยาบาล</div>
     <div class="sidebar-subtitle">รพ.มหาราชนครราชสีมา · 2567</div>
   </div>
-  <nav>
+  <div class="sidebar-search">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search-input" placeholder="ค้นหาเนื้อหา..." autocomplete="off" oninput="handleSearch(this.value)">
+      <button id="search-clear-btn" onclick="clearSearch()" title="ล้างการค้นหา">✕</button>
+    </div>
+    <div id="search-results-count"></div>
+  </div>
+
+  <nav id="sidebar-nav">
     <div class="nav-section-label">เนื้อหาหลัก</div>
     <a class="nav-item active" onclick="showSection('home')"><span class="nav-num">🏠</span> หน้าหลัก / คำนำ</a>
     <a class="nav-item" onclick="showSection('sec1')"><span class="nav-num">1</span> นโยบายการบริหารความเสี่ยง</a>
@@ -1821,8 +1939,184 @@
     document.body.style.overflow = '';
   }
 
+  // ===== SEARCH FUNCTIONALITY =====
+  const searchIndex = [
+    { id: 'home',  label: 'หน้าหลัก / คำนำ' },
+    { id: 'sec1',  label: '1. นโยบายการบริหารความเสี่ยง' },
+    { id: 'sec2',  label: '2. คำจำกัดความ' },
+    { id: 'sec3',  label: '3. นโยบาย 2P Safety' },
+    { id: 'sec4',  label: '4. นโยบาย Zero Event' },
+    { id: 'sec5',  label: '5. Risk Profile' },
+    { id: 'sec6',  label: '6. ระบบการบริหารความเสี่ยง' },
+    { id: 'sec7',  label: '7. อุบัติการณ์ความเสี่ยงคลินิก' },
+    { id: 'sec8',  label: '8. ความเสี่ยงทั่วไป Non-Clinic' },
+    { id: 'sec9',  label: '9. การบริหารความเสี่ยงและคุณภาพ' },
+    { id: 'sec10', label: '10. หน้าที่และความรับผิดชอบ' },
+    { id: 'sec11', label: '11. แผนภูมิการรายงาน' },
+    { id: 'sec12', label: '12. โครงสร้างการบริหารความเสี่ยง' },
+    { id: 'sec13', label: '13. เหตุการณ์รุนแรง Sentinel' },
+    { id: 'sec14', label: '14. แผนภูมิ Zero Event' },
+    { id: 'sec15', label: 'ภาคผนวก คู่มือโปรแกรมรายงานความเสี่ยง' },
+  ];
+
+  // Build full-text index from section content
+  const sectionContent = {};
+  function buildContentIndex() {
+    searchIndex.forEach(item => {
+      const el = document.getElementById(item.id);
+      if (el) {
+        sectionContent[item.id] = el.innerText || el.textContent || '';
+      }
+    });
+  }
+
+  let searchTimeout = null;
+  let currentHighlights = [];
+
+  function handleSearch(query) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => performSearch(query), 180);
+    document.getElementById('search-clear-btn').style.display = query ? 'block' : 'none';
+  }
+
+  function performSearch(query) {
+    const q = query.trim().toLowerCase();
+    const countEl = document.getElementById('search-results-count');
+    const navItems = document.querySelectorAll('#sidebar-nav .nav-item');
+
+    // Remove previous content highlights
+    removeHighlights();
+
+    if (!q) {
+      navItems.forEach(n => n.classList.remove('search-hidden', 'search-match'));
+      document.querySelectorAll('.nav-section-label, #search-no-result').forEach(el => {
+        el.style.display = '';
+      });
+      countEl.textContent = '';
+      return;
+    }
+
+    if (!Object.keys(sectionContent).length) buildContentIndex();
+
+    let matchCount = 0;
+
+    navItems.forEach(n => {
+      const onclick = n.getAttribute('onclick') || '';
+      const match = onclick.match(/showSection\('([^']+)'\)/);
+      const secId = match ? match[1] : null;
+
+      const labelMatch = n.textContent.toLowerCase().includes(q);
+      const contentMatch = secId && sectionContent[secId] && sectionContent[secId].toLowerCase().includes(q);
+
+      if (labelMatch || contentMatch) {
+        n.classList.remove('search-hidden');
+        n.classList.add('search-match');
+        matchCount++;
+      } else {
+        n.classList.add('search-hidden');
+        n.classList.remove('search-match');
+      }
+    });
+
+    // Hide section labels if all items under them are hidden
+    document.querySelectorAll('.nav-section-label').forEach(label => {
+      let next = label.nextElementSibling;
+      let hasVisible = false;
+      while (next && !next.classList.contains('nav-section-label')) {
+        if (!next.classList.contains('search-hidden') && next.classList.contains('nav-item')) {
+          hasVisible = true;
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      label.style.display = hasVisible ? '' : 'none';
+    });
+
+    // Highlight in active section content
+    highlightInContent(q);
+
+    if (matchCount === 0) {
+      countEl.textContent = 'ไม่พบผลลัพธ์';
+      countEl.style.color = 'rgba(255,120,120,0.8)';
+    } else {
+      countEl.textContent = `พบ ${matchCount} หมวด`;
+      countEl.style.color = 'var(--teal-pale)';
+    }
+  }
+
+  function highlightInContent(q) {
+    const activeSection = document.querySelector('.section.active');
+    if (!activeSection || !q) return;
+
+    const walker = document.createTreeWalker(activeSection, NodeFilter.SHOW_TEXT, {
+      acceptNode: node => {
+        if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        if (['SCRIPT','STYLE','MARK'].includes(node.parentNode.tagName)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(node => {
+      const idx = node.nodeValue.toLowerCase().indexOf(q);
+      if (idx === -1) return;
+
+      const mark = document.createElement('mark');
+      mark.className = 'search-highlight';
+      const range = document.createRange();
+      range.setStart(node, idx);
+      range.setEnd(node, idx + q.length);
+      range.surroundContents(mark);
+      currentHighlights.push(mark);
+    });
+
+    // Scroll to first highlight
+    if (currentHighlights.length > 0) {
+      currentHighlights[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function removeHighlights() {
+    currentHighlights.forEach(mark => {
+      if (mark.parentNode) {
+        const text = document.createTextNode(mark.textContent);
+        mark.parentNode.replaceChild(text, mark);
+      }
+    });
+    currentHighlights = [];
+    // Normalize merged text nodes
+    document.querySelectorAll('.section.active').forEach(s => s.normalize());
+  }
+
+  function clearSearch() {
+    const input = document.getElementById('sidebar-search-input');
+    input.value = '';
+    handleSearch('');
+    input.focus();
+  }
+
+  // Re-highlight when section changes (wrap original showSection)
+  const _origShowSection = showSection;
+  showSection = function(id) {
+    removeHighlights();
+    _origShowSection(id);
+    const q = document.getElementById('sidebar-search-input').value.trim().toLowerCase();
+    if (q) setTimeout(() => highlightInContent(q), 100);
+  };
+
+  // Build index on load
+  window.addEventListener('load', buildContentIndex);
+
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'Escape') {
+      closeLightbox();
+      const searchInput = document.getElementById('sidebar-search-input');
+      if (searchInput && document.activeElement === searchInput && searchInput.value) {
+        clearSearch();
+      }
+    }
   });
 
 </script>
